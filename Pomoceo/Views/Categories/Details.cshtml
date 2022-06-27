@@ -1,0 +1,33 @@
+﻿@model Pomoceo.Models.Category
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Szczegóły</h2>
+
+<div>
+    
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            <b class="col-md-2 control-label">
+                Nazwa kategorii
+            </b>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CategoryName)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Edytuj | ", "Edit", new { id = Model.CategoryID })
+    }
+
+    @Html.ActionLink("Powrót", "Index")
+</p>

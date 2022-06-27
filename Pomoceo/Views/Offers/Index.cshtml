@@ -1,0 +1,85 @@
+﻿@model IEnumerable<Pomoceo.Models.Offer>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Ogłoszenia</h2>
+<dt>Wybierz typ</dt>
+<dd>
+    @Html.ActionLink("Wszystko", "Index", new { sortOrder = "Wszystko" })
+    @Html.ActionLink("Potrzeba", "Index", new { sortOrder = "potrzeba" })
+    @Html.ActionLink("Oferowanie", "Index", new { sortOrder = "oferowanie" })
+</dd>
+
+<form asp-controller="Offers" asp-action="Index">
+    <p>
+        Miasto: <input type="text" name="searchString" />
+        <input type="submit" value="Wybierz" />
+    </p>
+</form>
+<form asp-controller="Offers" asp-action="Index">
+    <div class="col-md-10">
+        @Html.DropDownList("CategoryID", "Nazwa kategorii")
+        <input type="submit" value="Wybierz" />
+    </div>
+</form>
+
+<table class="table">
+    <tr>
+        @if (User.IsInRole("Admin"))
+        {
+            <th>
+                ID Użytkownika
+            </th>
+        }
+        <th>
+            Opis
+        </th>
+        <th>
+            Typ ogłoszenia
+        </th>
+        <th>
+            Tytuł
+        </th>
+        <th>
+            Miasto
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            @if (User.IsInRole("Admin"))
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserID)
+                </td>
+            }
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.ActionLink("Szczegóły", "Details", new { id = item.OfferID })
+                @if (User.IsInRole("Admin"))
+                {
+                    
+                    @Html.ActionLink(" | Edytuj | ", "Edit","Home","", new { id = item.OfferID })
+                    @Html.ActionLink("Usuń", "Delete", new { id = item.OfferID })
+                }
+            </td>
+        </tr>
+    }
+
+</table>

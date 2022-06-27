@@ -1,0 +1,110 @@
+﻿@model Pomoceo.Models.IndexViewModel
+@using System
+@using Microsoft.AspNet.Identity.EntityFramework
+@using Microsoft.AspNet.Identity
+@using Pomoceo.Models
+
+@{
+    ViewBag.Title = "Ustawienia";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div>
+    <h4>Zmień ustawienia konta</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Hasło</dt>
+        <dd>
+            [
+            @if (Model.HasPassword)
+            {
+                @Html.ActionLink("Zmień hasło", "ChangePassword")
+            }
+            else
+            {
+                @Html.ActionLink("Create", "SetPassword")
+            }
+            ]
+        </dd>
+    </dl>
+
+    @{
+        ApplicationDbContext db = new ApplicationDbContext();
+
+        var listOfUsers = (from u in db.Users
+                           let query = (from ur in db.Set<IdentityUserRole>()
+                                        where ur.UserId.Equals(u.Id)
+                                        join r in db.Roles on ur.RoleId equals r.Id
+                                        select r.Name)
+                           select new UserRoleInfo() { User = u, Roles = query.ToList<string>() })
+                     .ToList();
+
+
+        var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>());
+        var userRole = listOfUsers.Where(p => p.User.Id == User.Identity.GetUserId());
+
+        if (User.IsInRole("Admin"))
+        {
+            
+            <dd>
+                @Html.ActionLink("Dodaj uzytkownika", "Create", "Account")
+            </dd>
+            <dt>Użytkownicy</dt>
+            <dd>
+                <table class="table">
+                    <tr>
+                        <th>
+                            Imie
+                        </th>
+                        <th>
+                            Nazwisko
+                        </th>
+                        <th>
+                            narodowosc
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in db.Users)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FirstName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LastName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Nationality)
+                            </td>
+
+                            <td>
+                                @Html.ActionLink("Edytuj", "Edit", "Account", new { id = item.Id }, "") |
+                                @Html.ActionLink("Szczegóły", "Details", "Account", new { id = item.Id }, "")
+                            </td>
+                        </tr>
+                    }
+
+
+                </table>
+            </dd>
+
+        }
+        <dt>Kategorie </dt>
+        <dd>
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.ActionLink("Dodaj kategorie", "Create", "Categories")
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.ActionLink("Pokaz kategorie", "Index", "Categories")
+                </div>
+            </div>
+        </dd>
+    }
+
+</div>

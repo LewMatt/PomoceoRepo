@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Pomoceo.Models.Category>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Kategorie</h2>
+
+<p>
+    @Html.ActionLink("Dodaj nową kategorie", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            ID
+        </th>
+        <th>
+            Nazwa kategorii
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.CategoryID)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.CategoryName)
+    </td>
+    <td>
+        @if (User.IsInRole("Admin"))
+        {
+            @Html.ActionLink("Edytuj", "Edit", new { id = item.CategoryID })
+            @Html.ActionLink(" | Szczegóły | ", "Details", new { id = item.CategoryID })
+            @Html.ActionLink("Usuń", "Delete", new { id = item.CategoryID })
+        }
+
+    </td>
+</tr>
+}
+
+</table>
